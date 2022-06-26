@@ -1,50 +1,44 @@
-// See online documentation for examples
-// https://docs.getdrafts.com/docs/actions/scripting
+from urllib2 import Request, urlopen
 
-// Token from API
+values = """
+  {
+    "name": "New Task Name",
+    "description": "New Task Description",
+    "assignees": [
+      183
+    ],
+    "tags": [
+      "tag name 1"
+    ],
+    "status": "Open",
+    "priority": 3,
+    "due_date": 1508369194377,
+    "due_date_time": false,
+    "time_estimate": 8640000,
+    "start_date": 1567780450202,
+    "start_date_time": false,
+    "notify_all": true,
+    "parent": null,
+    "links_to": null,
+    "check_required_custom_fields": true,
+    "custom_fields": [
+      {
+        "id": "0a52c486-5f05-403b-b4fd-c512ff05131c",
+        "value": 23
+      },
+      {
+        "id": "03efda77-c7a0-42d3-8afd-fd546353c2f5",
+        "value": "Text field input"
+      }
+    ]
+  }
+"""
 
-var credential = Credential.create("Clickup", "need a valid token to access to ClickUp.");
-
-credential.addTextField("authorizationToken", "AuthorizationToken");
-
-credential.authorize();
-
-const homura = 3653276;
-const inboxId = "7837385";
-const itsukatabunId = "7817267";
-
-function createTask() {
-
-    let title = draft.processTemplate("[[line|1]]")
-    let listNum = draft.processTemplate("[[line|2]]")
-    let description = draft.processTemplate("[[line|3..]]")
-    let ddate = new Date()
-
-    if (listNum == '') {
-        listNum = inboxId;
-    } else {
-        listNum = itsukatabunId;
-    }
-
-    let url = "https://api.clickup.com/api/v2/list/" + listNum + "/task";
-
-    let body = {
-        'name': title,
-        'description': description,
-        'assignees': [homura],
-        'due_date': ddate.getTime(),
-  		};
-    //alert(ddate.getTime());
-    let http = HTTP.create();
-    let response = http.request({
-        "url": url,
-        "method": "POST",
-        "data": body,
-        "headers": {
-            "Content-Type": "application/json",
-            "Authorization": credential.getValue("authorizationToken")
-        }
-    });
+headers = {
+  'Authorization': '\'access_token\'',
+  'Content-Type': 'application/json'
 }
-// List name ID (last digits from url
-createTask();
+request = Request('https://api.clickup.com/api/v2/list/{list_id}/task', data=values, headers=headers)
+
+response_body = urlopen(request).read()
+print response_body
